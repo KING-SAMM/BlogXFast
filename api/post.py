@@ -4,8 +4,8 @@ from model.Post import Post
 def read_all():
     conn = get_database_connection()
     
-    posts_model = Post(conn)
-    posts = posts_model.read()
+    post_model = Post(conn)
+    posts = post_model.read()
     
     conn.close()
     return {"posts": posts}
@@ -13,11 +13,14 @@ def read_all():
 
 def read_one(post_id: int):
     conn = get_database_connection()
-    mycursor = conn.cursor()
-    mycursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
+    # mycursor = conn.cursor()
+    # mycursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
     
-    columns = [col[0] for col in mycursor.description]
-    post = mycursor.fetchone()
+    # columns = [col[0] for col in mycursor.description]
+    # post = mycursor.fetchone()
+    
+    post_model = Post(conn)
+    post = post_model.read_single(post_id)
     
     conn.close()
 
@@ -26,7 +29,7 @@ def read_one(post_id: int):
         # Return the status code and details in the response dictionary
         return {"status_code": 404, "error": "Post not found"}
     
-    return {"post": dict(zip(columns, post))}
+    return post
 
 
 def add_post(post_data):
